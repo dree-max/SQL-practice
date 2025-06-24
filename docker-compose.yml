@@ -23,5 +23,29 @@ services:
       DB_USER: user
       DB_PASS: password
 
+
+  db_mysql:
+    image: mysql:8.0
+    container_name: mysql_benchmark_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+
+  app_mysql:
+    build: ./mysql_benchmark
+    depends_on:
+      - db_mysql
+    environment:
+      DB_HOST: db_mysql
+      DB_PORT: 3306
+      DB_NAME: testdb
+      DB_USER: user
+      DB_PASS: password
+
 volumes:
   pgdata:
