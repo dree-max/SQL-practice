@@ -1,5 +1,6 @@
 import time
 from db_utils import get_conn
+import random
 
 def execute_query(cursor, query):
     start = time.time()
@@ -9,34 +10,27 @@ def execute_query(cursor, query):
 
 def main():
     conn = get_conn()
-    conn.autocommit = True
     cur = conn.cursor()
 
-    # 1. Create table
+    # 1. Drop and create table (split into two execute calls)
+    cur.execute("DROP TABLE IF EXISTS users;")
     cur.execute("""
-    DROP TABLE IF EXISTS users;
     CREATE TABLE users (
-        id SERIAL PRIMARY KEY,
-        name TEXT,
-        email TEXT,
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255),
+        email VARCHAR(255),
         age INT
     );
     """)
 
-
-    start = time.time()
-    # 2. Insert data
+    # 2. Insert data (example for 1000 users)
     print("Inserting rows...")
-    cur.execute("""
-    INSERT INTO users (name, email, age)
-    SELECT
-        'User ' || g,
-        'user' || g || '@mail.com',
-        floor(random() * 100)::int
-    FROM generate_series(1, 10000000) AS g;
-    """)
-
-    
+    start = time.time()
+    for i in range(1, 1001):
+        cur.execute(
+            "INSERT INTO users (name, email, age) VALUES (%s, %s, %s)",
+            (f"User {i}", f"user{i}@mail.com", int(100 * random.random()))
+        )
     conn.commit()
     print(f"Inserted in {time.time() - start:.2f} seconds")
 
@@ -52,7 +46,6 @@ def main():
     # 5. Add NOT NULL column with default
     print("Adding NOT NULL column with default...")
     t2 = execute_query(cur, "ALTER TABLE users ADD COLUMN phone_number VARCHAR(10) NOT NULL DEFAULT '0000000000';")
-    #t2 = execute_query(cur, "ALTER TABLE users ADD COLUMN phone_number VARCHAR(10) NOT NULL;")
     conn.commit()
     print(f"Non-nullable column without default added in {t2:.2f} seconds")
 
