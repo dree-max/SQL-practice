@@ -47,7 +47,7 @@ def main():
     print("Adding NOT NULL column with default...")
     t2 = execute_query(cur, "ALTER TABLE users ADD COLUMN phone_number VARCHAR(10) NOT NULL DEFAULT '0000000000';")
     conn.commit()
-    print(f"Non-nullable column without default added in {t2:.2f} seconds")
+    print(f"Non-nullable column with default added in {t2:.2f} seconds")
 
     cur.close()
     conn.close()

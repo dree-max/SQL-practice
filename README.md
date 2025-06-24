@@ -153,3 +153,5 @@ SQL-practice/
 
 MIT License
 
+To Only run the mysql part:
+docker-compose up --build app_mysql
