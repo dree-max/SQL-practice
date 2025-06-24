@@ -20,3 +20,5 @@ How will you do a “Painless Database Migration” ?
 =========
 To run this locally simply clone the repo and run docker-compose up --build
 
+To Only run the mysql part:
+docker-compose up --build app_mysql
